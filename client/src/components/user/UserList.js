@@ -4,7 +4,7 @@ import useUpdate from './useUpdate';
 import UpdateForm from './UpdateForm';
 
 export default function UserList() {
-    const {users, page, setPage, pageSize, setPageSize, totalPages, getAllUserLoading} =  useFetch();
+    const {users, page, setPage, pageSize, setPageSize, totalPages, getAllUserLoading, filter, setFilter} =  useFetch();
     const {onClickSelectAll,onClickSelectHandler, selected, onClickUpdatedHandler, isUnemployed, setIsUnemployed, isUpdateLoading} = useUpdate();
 
     const [openModal, setOpenModal] = React.useState(false);
@@ -23,6 +23,10 @@ export default function UserList() {
 
     const onClickToggleModalHandler = () => {
         setOpenModal(b => !b);
+    }
+    const onFilterChangeHandler = e => {
+        setFilter(e.target.value);
+        localStorage.setItem('filter', e.target.value)
     }
 
     if(getAllUserLoading){
@@ -47,6 +51,19 @@ export default function UserList() {
                 </div>
 
             }
+
+            
+
+            <div>
+                <label>Set filter</label>
+                <select
+                onChange={e => onFilterChangeHandler(e)} 
+                value={filter} class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option value="all">Employed and Unemployed</option>
+                    <option value="employed">Employed</option>
+                    <option value="unemployed">Unemployed</option>
+                </select>
+            </div>
 
             <table className="table">
                 <thead>

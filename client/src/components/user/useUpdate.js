@@ -25,7 +25,7 @@ export default function useUpdate() {
     const onClickUpdatedHandler = async (e) => {
         setIsUpdateLoading(true);
         try {
-            const res = await axios.patch('https://demo-mongod.herokuapp.com/api/user/update',{selected, isUnemployed});
+            const res = await axios.patch('http://localhost:5000/api/user/update',{selected, isUnemployed});
             setIsUpdateLoading(false);
             alert(res.data.message)
             window.location.reload();

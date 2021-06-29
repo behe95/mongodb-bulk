@@ -36,19 +36,33 @@ export async function saveFakeDatas(req, res) {
 export async function getAllUserController(req, res) {
     const page = req.query.page;
     const page_size = req.query.page_size;
+    const filter = req.query.filter || "all";
 
     const skip = (page - 1) * page_size || 0;
     const limit = page_size || 15;
+    
+    const dynMatch = {};
+    if(filter === "unemployed"){
+        dynMatch["unemployed"] = true
+    }else if(filter === "employed"){
+        dynMatch["unemployed"] = false;
+    }
+
     try {
         const dbClient = await database();
-        const totalUsers = await dbClient.collection('users').count();
+        // const totalUsers = await dbClient.collection('users').count();
+        const totalUsers = await dbClient.collection('users').aggregate([
+            {$match: {...dynMatch}},
+            {$count: "count"}
+        ]).toArray()
+
         const users = await dbClient.collection('users').aggregate([
-            {$match: {}},
+            {$match: {...dynMatch}},
             {$sort: {'updatedAt': -1, 'createdAt': -1}},
             {$skip: parseInt(skip)},
             {$limit: parseInt(limit)},
         ]).toArray()
-
+        console.log(users);
         res.json({
             users,
             totalUsers
